@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统</title>
+
+    <!-- ElementUI -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- ElementUI -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Microsoft YaHei",sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        :root {
+            --theme-primary: #5B8FF9;      /* 柔和高级蓝 */
+            --theme-header: #4E7BEF;       /* 深一点的顶部蓝 */
+            --theme-bg: #f4f7fc;           /* 微蓝灰背景 */
+            --theme-card: #ffffff;
+            --theme-text: #34495e;         /* 柔和深灰蓝 */
+            --theme-border: #e6ebf2;       /* 更淡边框 */
+        }
+        .theme-yellow-root {
+            --theme-primary: #D6A84F;      /* 莫兰迪金黄 */
+            --theme-header: #C9973E;       /* 稍深金色 */
+            --theme-bg: #fdfaf4;           /* 米白暖色背景 */
+            --theme-card: #ffffff;
+            --theme-text: #7a5c1e;         /* 深棕金文字 */
+            --theme-border: #efe3c7;       /* 超柔和边框 */
+        }
+
+        body{
+            background: var(--theme-bg);
+        }
+        #app{
+            background: var(--theme-bg);
+            min-height:100vh;
+        }
+        .main-layout{
+            display:flex;
+            min-height:100vh;
+        }
+
+        /* ========== 修复：侧边栏统一白色背景 ========== */
+        .sidebar{
+            width:220px;
+            background: #ffffff;
+            border-right: 1px solid var(--theme-border);
+        }
+        .logo{
+            height:60px;
+            line-height:60px;
+            text-align:center;
+            color: var(--theme-primary);
+            font-size:22px;
+            font-weight:bold;
+            border-bottom:1px solid var(--theme-border);
+            background: #ffffff;
+        }
+
+        /* 侧边栏菜单样式（适配白色背景） */
+        .el-menu {
+            border-right: none !important;
+            background: transparent !important;
+        }
+        .el-menu-item, .el-submenu__title {
+            color: var(--theme-text) !important;
+        }
+        /* 菜单激活/悬停样式 */
+        .el-menu-item.is-active {
+            background-color: var(--theme-primary) !important;
+            color: #fff !important;
+        }
+        .el-submenu__title:hover, .el-menu-item:hover {
+            background-color: var(--theme-primary) !important;
+            color: #fff !important;
+            opacity: 0.9;
+        }
+
+        /* 内容区域 */
+        .content{
+            flex:1;
+            padding:20px;
+            overflow:auto;
+        }
+
+        /* 顶部栏 */
+        .header{
+            height:60px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 20px;
+            border-radius:12px;
+            color:#fff;
+            margin-bottom:20px;
+            background: var(--theme-header);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        /* 卡片统一样式 */
+        .el-card {
+            border-radius: 12px !important;
+            border: 1px solid var(--theme-border) !important;
+            background: var(--theme-card) !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
+        }
+        .el-card__header {
+            border-bottom: 1px solid var(--theme-border) !important;
+            background: rgba(245,247,250,0.5) !important;
+        }
+
+        /* ========== 修复：主题按钮生效 ========== */
+        .el-button--primary {
+            background-color: var(--theme-primary) !important;
+            border-color: var(--theme-primary) !important;
+        }
+
+        /* 首页核心样式 */
+        .home-row {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+            margin-top: 5px;
+        }
+        .left-card {
+            flex: 0 0 38%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+        }
+        .right-card {
+            flex: 1;
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+        }
+        .welcome-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 35px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .user-name {
+            color: var(--theme-primary);
+            font-weight: bold;
+            font-size: 30px;
+        }
+        .avatar-wrapper {
+            width: 260px;
+            aspect-ratio: 1/1;
+            border: 3px solid var(--theme-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(245,247,250,0.4);
+        }
+        .avatar-icon {
+            font-size: 120px;
+            color: var(--theme-primary);
+        }
+        .calendar-box {
+            flex: 1;
+        }
+        /* 日历主题适配 */
+        .el-calendar__button-group .el-button-line.is-active {
+            background: var(--theme-primary) !important;
+            border-color: var(--theme-primary) !important;
+        }
+        .el-calendar-day:hover {
+            background-color: var(--theme-primary) !important;
+            opacity: 0.2;
+        }
+
+        /* 响应式适配 */
+        @media screen and (max-width: 1000px){
+            .sidebar{
+                display:none;
+            }
+            .content{
+                width:100%;
+            }
+        }
+        @media screen and (max-width: 768px){
+            .home-row {
+                flex-direction: column;
+            }
+            .left-card {
+                flex: none;
+                width: 100%;
+            }
+            .header{
+                flex-direction:column;
+                height:auto;
+                padding:15px;
+                gap:10px;
+            }
+            .avatar-wrapper {
+                width: 200px;
+            }
+            .avatar-icon {
+                font-size: 90px;
+            }
+        }
+    </style>
+</head>
+
+<!-- 主题绑定 -->
+<body>
+<div id="app" :class="theme === 'yellow' ? 'theme-yellow-root' : ''">
+    <div class="main-layout">
+        <!-- 左侧菜单（白色背景） -->
+        <div class="sidebar">
+            <div class="logo"></div>
+            <el-menu default-active="1" background-color="transparent">
+                <!-- 首页 -->
+                <el-menu-item index="1" @click="showHome=true; showUsers=false; showArticle=false">
+                    <i class="el-icon-s-home"></i>
+                    <span slot="title">首页</span>
+                </el-menu-item>
+
+                <!-- 功能菜单 -->
+                <el-submenu index="2">
+                    <template slot="title">
+                        <i class="el-icon-menu"></i>
+                        <span>功能菜单</span>
+                    </template>
+                    <el-menu-item index="2-1" @click="showUsers=true; showHome=false; showArticle=false">
+                        <i class="el-icon-user"></i>
+                        <span slot="title">用户管理</span>
+                    </el-menu-item>
+                    <el-menu-item index="2-2" @click="showArticle=true; showHome=false; showUsers=false">
+                        <i class="el-icon-document"></i>
+                        <span slot="title">文章管理</span>
+                    </el-menu-item>
+                </el-submenu>
+
+                <!-- 切换主题 -->
+                <el-submenu index="3">
+                    <template slot="title">
+                        <i class="el-icon-setting"></i>
+                        <span>切换主题</span>
+                    </template>
+                    <el-menu-item index="3-1" @click="changeTheme('blue')">蓝色风格</el-menu-item>
+                    <el-menu-item index="3-2" @click="changeTheme('yellow')">黄色风格</el-menu-item>
+                </el-submenu>
+            </el-menu>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="content">
+            <!-- 顶部栏 -->
+            <div class="header">
+                <div>欢迎进入后台管理系统</div>
+                <div><el-button type="danger" size="mini" @click="logout">退出登录</el-button></div>
+            </div>
+
+            <!-- 首页 -->
+            <div class="home-row" v-if="showHome">
+                <el-card class="left-card" shadow="hover">
+                    <div class="welcome-title">
+                        欢迎回来，<span class="user-name">admin</span>
+                    </div>
+                    <div class="avatar-wrapper">
+                        <i class="el-icon-user-solid avatar-icon"></i>
+                    </div>
+                </el-card>
+                <el-card class="right-card" shadow="hover">
+                    <div class="calendar-box">
+                        <el-calendar v-model="currentDate"></el-calendar>
+                    </div>
+                </el-card>
+            </div>
+
+            <!-- 用户管理 -->
+            <el-card shadow="hover" style="margin-top:20px;" v-if="showUsers">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <h2>用户管理</h2>
+                    <el-button type="primary">新增用户</el-button>
+                </div>
+                <el-row :gutter="20" style="margin-bottom:20px;">
+                    <el-col :xs="24" :sm="12" :md="8">
+                        <el-input v-model="search" placeholder="请输入用户名"></el-input>
+                    </el-col>
+                    <el-col :xs="24" :sm="12" :md="4">
+                        <el-button type="primary">搜索</el-button>
+                    </el-col>
+                </el-row>
+                <el-table :data="tableData" border stripe style="width:100%;">
+                    <el-table-column prop="id" label="编号" width="80"></el-table-column>
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="age" label="年龄"></el-table-column>
+                    <el-table-column prop="email" label="邮箱"></el-table-column>
+                    <el-table-column label="操作" width="220">
+                        <template slot-scope="scope">
+                            <el-button type="primary" size="mini">编辑</el-button>
+                            <el-button type="danger" size="mini">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div style="margin-top:20px;text-align:center;">
+                    <el-pagination background layout="total, prev, pager, next" :total="50" :page-size="5"></el-pagination>
+                </div>
+            </el-card>
+
+            <!-- 文章管理 -->
+            <el-card shadow="hover" style="margin-top:20px;" v-if="showArticle">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <h2>文章管理</h2>
+                    <el-button type="primary">发布文章</el-button>
+                </div>
+                <el-row :gutter="20" style="margin-bottom:20px;">
+                    <el-col :xs="24" :sm="12" :md="8">
+                        <el-input v-model="articleSearch" placeholder="请输入文章标题"></el-input>
+                    </el-col>
+                    <el-col :xs="24" :sm="12" :md="4">
+                        <el-button type="primary">搜索</el-button>
+                    </el-col>
+                </el-row>
+                <el-table :data="articleData" border stripe style="width:100%;">
+                    <el-table-column prop="id" label="编号" width="80"></el-table-column>
+                    <el-table-column prop="title" label="文章标题"></el-table-column>
+                    <el-table-column prop="author" label="作者"></el-table-column>
+                    <el-table-column prop="time" label="发布时间"></el-table-column>
+                    <el-table-column label="操作" width="220">
+                        <template slot-scope="scope">
+                            <el-button type="primary" size="mini">编辑</el-button>
+                            <el-button type="danger" size="mini">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div style="margin-top:20px;text-align:center;">
+                    <el-pagination background layout="total, prev, pager, next" :total="60" :page-size="5"></el-pagination>
+                </div>
+            </el-card>
+        </div>
+    </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+:root, .theme-blue {
+  --theme-primary: #5B8FF9;
+  --theme-header: #4E7BEF;
+  --theme-bg: #f4f7fc;
+  --theme-card: #ffffff;
+  --theme-text: #34495e;
+  --theme-border: #e6ebf2;
+}
+
+.theme-yellow {
+  --theme-primary: #D6A84F;
+  --theme-header: #C9973E;
+  --theme-bg: #fdfaf4;
+  --theme-card: #ffffff;
+  --theme-text: #7a5c1e;
+  --theme-border: #efe3c7;
+}

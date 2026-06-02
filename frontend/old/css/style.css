@@ -1,0 +1,170 @@
+
+* {
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box; 
+}
+
+
+.main-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+
+.sidebar {
+    width: 220px;
+    background: #304156;
+    color: white;
+}
+
+.sidebar-yellow {
+    background: #d9a300;
+}
+
+.logo {
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    background: #f0f2f5;
+}
+
+.header {
+    height: 60px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.theme-blue {
+    background: #409EFF !important;
+}
+
+.theme-yellow {
+    background: #f5c542 !important;
+}
+
+/* 响应式 */
+
+@media screen and (max-width:800px){
+
+    body{
+
+        min-height:100vh;
+
+        display:flex;
+        justify-content:center;
+        align-items:center;
+
+        padding:20px;
+
+    }
+
+    .login-wrapper{
+
+        width:100%;
+
+        max-width:500px;
+
+        margin:auto;
+
+    }
+
+    /* 主登录容器 */
+
+    .login-container{
+
+        flex-direction:column;
+
+    }
+
+    .left-panel{
+
+        width:100%;
+
+        padding:30px;
+
+    }
+
+    .right-panel{
+
+        width:100%;
+
+        padding:30px;
+
+    }
+
+    /* 底部容器 */
+
+    .bottom-container{
+
+        display:flex;
+
+        flex-direction:column;
+
+        width:100%;
+
+    }
+
+    /* 核心修复 */
+
+    .bottom-btn{
+
+        width:100%;
+
+        height:60px !important;
+
+        min-height:60px !important;
+
+        max-height:60px !important;
+
+        flex:none !important;
+
+        display:flex;
+
+        justify-content:center;
+
+        align-items:center;
+
+        font-size:16px;
+
+    }
+
+    .bottom-btn:first-child{
+
+        border-right:none;
+
+        border-bottom:1px solid rgba(255,255,255,0.2);
+
+    }
+
+}
+
+
+@media screen and (min-width: 801px) {
+    .card {
+        width: 900px;
+        display: flex;
+    }
+
+    .left-panel {
+        width: 40%;
+    }
+
+    .right-panel {
+        width: 60%;
+    }
+}

@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>登录页面</title>
+
+    <!-- ElementUI -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- ElementUI -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:"Microsoft YaHei",sans-serif;
+    }
+
+    body{
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background: linear-gradient(135deg,#409EFF,#66b1ff);
+        padding:20px;
+    }
+
+    /* 总容器 */
+    .login-wrapper{
+        width:100%;
+        max-width:900px;
+    }
+
+        /* 标题 */
+
+        .main-title{
+
+            text-align:center;
+
+            color:#ffffff;
+
+            font-size:34px;
+
+            font-weight:bold;
+
+            margin-bottom:25px;
+
+            letter-spacing:2px;
+
+        }
+
+        /* 容器1 */
+
+        .login-container{
+
+            background:#ffffff;
+
+            border-radius:16px 16px 0 0;
+
+            overflow:hidden;
+
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+            display:flex;
+
+        }
+
+        /* 左侧 */
+
+        .left-panel{
+
+            width:40%;
+
+            background:#f5f7fa;
+
+            padding:40px;
+
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+
+            gap:25px;
+
+        }
+
+        /* 右侧 */
+
+        .right-panel{
+
+            width:60%;
+
+            padding:40px;
+
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+
+        }
+
+        /* 社交按钮 */
+
+        .social-btn{
+
+            width:100%;
+
+            height:52px;
+
+            border:none;
+
+            border-radius:10px;
+
+            color:#ffffff;
+
+            font-size:16px;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            gap:12px;
+
+        }
+
+        .social-btn i{
+
+            font-size:20px;
+
+        }
+
+        .qq{
+
+            background:#409EFF;
+
+        }
+
+        .wechat{
+
+            background:#67C23A;
+
+        }
+
+        .alipay{
+
+            background:#909399;
+
+        }
+
+        .social-btn:hover{
+
+            transform:translateY(-2px);
+
+            opacity:0.9;
+
+        }
+
+        /* 输入框 */
+
+        .el-input{
+
+            margin-bottom:25px;
+
+        }
+
+        .el-input__inner{
+
+            height:50px;
+
+            border-radius:10px;
+
+            font-size:16px;
+
+        }
+
+        /* 登录按钮 */
+
+        .login-btn{
+
+            width:100%;
+
+            height:52px;
+
+            border:none;
+
+            border-radius:10px;
+
+            background:#67C23A;
+
+            color:#ffffff;
+
+            font-size:17px;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+        }
+
+        .login-btn:hover{
+
+            opacity:0.9;
+
+        }
+
+        /* 容器2 */
+
+        .bottom-container{
+
+            display:flex;
+
+            background:#ffffff;
+
+            border-top:1px solid #eeeeee;
+
+            border-radius:0 0 16px 16px;
+
+            overflow:hidden;
+
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+        }
+
+        /* 底部按钮 */
+
+        .bottom-btn{
+
+            flex:1;
+
+            height:60px;
+
+            border:none;
+
+            background:#909399;
+
+            color:#ffffff;
+
+            font-size:16px;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+        }
+
+        .bottom-btn:hover{
+
+            opacity:0.9;
+
+        }
+
+        .bottom-btn:first-child{
+
+            border-right:1px solid rgba(255,255,255,0.2);
+
+        }
+
+        /* 响应式 */
+
+        @media screen and (max-width:800px){
+
+            .login-container{
+
+                flex-direction:column;
+
+            }
+
+            .left-panel{
+
+                width:100%;
+
+                padding:30px;
+
+            }
+
+            .right-panel{
+
+                width:100%;
+
+                padding:30px;
+
+            }
+
+            .bottom-container{
+
+                flex-direction:column;
+
+            }
+
+            .bottom-btn{
+
+                width:100%;
+                height:60px !important; /* 强制固定高度，优先级最高 */
+                flex: none; /* 取消flex拉伸，避免高度被篡改 */
+
+            }
+
+            .bottom-btn:first-child{
+
+                border-right:none;
+
+                border-bottom:1px solid rgba(255,255,255,0.2);
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div id="app">
+
+    <div class="login-wrapper">
+
+        <!-- 标题 -->
+        <div class="main-title">
+
+            用户登录
+
+        </div>
+
+        <!-- 容器1 -->
+        <div class="login-container">
+
+            <!-- 左侧 -->
+            <div class="left-panel">
+
+                <button class="social-btn qq">
+
+                    <i class="fa-brands fa-qq"></i>
+
+                    QQ登录
+
+                </button>
+
+                <button class="social-btn wechat">
+
+                    <i class="fa-brands fa-weixin"></i>
+
+                    微信登录
+
+                </button>
+
+                <button class="social-btn alipay">
+
+                    <i class="fa-brands fa-alipay"></i>
+
+                    支付宝登录
+
+                </button>
+
+            </div>
+
+            <!-- 右侧 -->
+            <div class="right-panel">
+
+                <!-- 用户名 -->
+                <el-input
+                        placeholder="请输入用户名"
+                        v-model="loginForm.username">
+
+                    <i slot="prefix"
+                       class="el-input__icon el-icon-user">
+                    </i>
+
+                </el-input>
+
+                <!-- 密码 -->
+                <el-input
+                        placeholder="请输入密码"
+                        v-model="loginForm.password"
+                        show-password>
+
+                    <i slot="prefix"
+                       class="el-input__icon el-icon-lock">
+                    </i>
+
+                </el-input>
+
+                <!-- 登录 -->
+                <button class="login-btn"
+                        @click="login">
+
+                    登录
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- 容器2 -->
+        <div class="bottom-container">
+
+            <button class="bottom-btn"
+            @click="goRegister">
+
+
+                注册用户
+
+            </button>
+
+          
+            <button class="bottom-btn"
+            @click="goForgot">
+
+                修改密码
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/login.js"></script>
+
+
+</body>
+</html>

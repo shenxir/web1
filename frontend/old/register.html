@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <!-- 引入依赖（与登录页保持一致） -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Microsoft YaHei",sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background: linear-gradient(135deg,#409EFF,#66b1ff);
+            padding:20px;
+        }
+
+        /* 总容器，控制最大宽度 */
+        .register-wrapper{
+            width:100%;
+            max-width:900px;
+        }
+
+        /* 页面标题 */
+        .page-title{
+            text-align:center;
+            color:#ffffff;
+            font-size:34px;
+            font-weight:bold;
+            margin-bottom:25px;
+            letter-spacing:2px;
+        }
+
+        /* ========== 容器1：注册主区域 ========== */
+        .register-container{
+            background:#ffffff;
+            border-radius:16px 16px 0 0;
+            overflow:hidden;
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+            display:flex;
+        }
+
+        /* 左侧：表单输入区域 */
+        .register-left{
+            width:50%;
+            padding:40px;
+            display:flex;
+            flex-direction:column;
+            gap: 25px;
+        }
+
+        /* 右侧：头像上传区域 */
+        .register-right{
+            width:50%;
+            padding:40px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+        }
+
+        /* 头像上传提示文字 */
+        .upload-tip{
+            font-size:18px;
+            color:#666666;
+            margin-bottom:20px;
+        }
+
+        /* 自定义虚线头像上传框 */
+        .avatar-box{
+            width:280px;
+            height:280px;
+            border:2px dashed #cccccc;
+            border-radius:8px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            cursor:pointer;
+            transition:all 0.3s ease;
+            position:relative;
+        }
+
+        .avatar-box:hover{
+            border-color:#409EFF;
+            background:#f5f7fa;
+        }
+
+        .avatar-box i{
+            font-size:50px;
+            color:#909399;
+        }
+
+        /* 隐藏原生文件选择框 */
+        #avatarInput{
+            position:absolute;
+            width:100%;
+            height:100%;
+            opacity:0;
+            cursor:pointer;
+        }
+
+        /* 输入框统一样式 */
+        .el-input__inner, .el-date-editor{
+            height:50px;
+            border-radius:10px;
+            font-size:16px;
+        }
+
+        /* ========== 容器2：底部按钮区域 ========== */
+        .bottom-container{
+            background:#ffffff;
+            border-top:1px solid #eeeeee;
+            border-radius:0 0 16px 16px;
+            display:flex;
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* 按钮样式（高度固定） */
+        .bottom-btn{
+            flex:1;
+            height:60px;
+            border:none;
+            background:#909399;
+            color:#ffffff;
+            font-size:16px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .bottom-btn:hover{
+            opacity:0.9;
+        }
+
+        .bottom-btn:first-child{
+            border-right:1px solid rgba(255,255,255,0.2);
+        }
+
+        /* ========== 响应式适配：800px以下 ========== */
+        @media screen and (max-width:800px){
+            .register-container{
+                flex-direction:column;
+            }
+            .register-left, .register-right{
+                width:100%;
+                padding:30px;
+            }
+            .avatar-box{
+                width:240px;
+                height:240px;
+            }
+            .bottom-container{
+                flex-direction:column;
+            }
+            .bottom-btn{
+                width:100%;
+                height:60px !important;
+                flex:none;
+            }
+            .bottom-btn:first-child{
+                border-right:none;
+                border-bottom:1px solid rgba(255,255,255,0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="register-wrapper">
+            <h2 class="page-title">用户注册</h2>
+
+            <!-- 容器1：注册表单 + 头像上传 -->
+            <div class="register-container">
+                <div class="register-left">
+                    <!-- 🔥 绑定register.js中的表单：ref/model 严格对应 -->
+                    <el-form 
+                        ref="registerForm" 
+                        :model="registerForm" 
+                        :rules="rules" 
+                        label-width="0"
+                    >
+                        <!-- 用户名 -->
+                        <el-form-item prop="username">
+                            <el-input placeholder="请输入用户名" v-model="registerForm.username">
+                                <i slot="prefix" class="el-input__icon el-icon-user"></i>
+                            </el-input>
+                        </el-form-item>
+
+                        <!-- 密码 -->
+                        <el-form-item prop="password">
+                            <el-input placeholder="请输入密码" v-model="registerForm.password" show-password>
+                                <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+                            </el-input>
+                        </el-form-item>
+
+                        <!-- 邮箱 -->
+                        <el-form-item prop="email">
+                            <el-input placeholder="请输入邮箱" v-model="registerForm.email">
+                                <i slot="prefix" class="el-input__icon el-icon-message"></i>
+                            </el-input>
+                        </el-form-item>
+
+                        <!-- 出生年月日 -->
+                        <el-form-item prop="birthday">
+                            <el-date-picker
+                                v-model="registerForm.birthday"
+                                type="date"
+                                placeholder="请选择出生年月日"
+                                style="width:100%">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-form>
+                </div>
+
+                <!-- 右侧：头像上传框 -->
+                <div class="register-right">
+                    <div class="upload-tip">请上传头像</div>
+                    <div class="avatar-box">
+                        <i class="fa-solid fa-plus"></i>
+                        <input type="file" id="avatarInput" accept="image/*">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 容器2：底部按钮 -->
+            <div class="bottom-container">
+                <button class="bottom-btn" @click="register">注册用户</button>
+                <button class="bottom-btn" @click="goLogin">返回登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 引入外部register.js（路径：js文件夹） -->
+    <script src="js/register.js"></script>
+</body>
+</html>
