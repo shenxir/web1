@@ -1,11 +1,16 @@
 # IDE
 .idea/
+*.iml
 
 # 依赖
 node_modules/
 
 # 构建产物
 frontend/dist/
+backend/target/
+
+# 编译文件
+*.class
 
 # 日志
 *.log
