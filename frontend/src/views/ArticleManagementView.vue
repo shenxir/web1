@@ -31,15 +31,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { getArticles } from '@/api/index.js'
 
 const articleSearch = ref('')
+const articleData = ref([])
 
-const articleData = ref([
-  { id: 1, title: 'Vue前端开发实战', author: 'admin', time: '2025-01-01' },
-  { id: 2, title: 'ElementUI使用指南', author: 'test', time: '2025-01-02' },
-  { id: 3, title: '响应式布局设计', author: 'editor', time: '2025-01-03' },
-  { id: 4, title: 'JavaScript基础语法', author: 'writer', time: '2025-01-04' },
-  { id: 5, title: 'CSS高级技巧', author: 'dev', time: '2025-01-05' }
-])
+onMounted(async () => {
+  try {
+    const res = await getArticles()
+    if (res.data.success) {
+      articleData.value = res.data.data
+    }
+  } catch (e) {
+    ElMessage.error('加载文章数据失败')
+  }
+})
 </script>

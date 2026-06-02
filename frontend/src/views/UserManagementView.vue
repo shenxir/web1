@@ -31,15 +31,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { getUsers } from '@/api/index.js'
 
 const search = ref('')
+const tableData = ref([])
 
-const tableData = ref([
-  { id: 1, name: '张三', age: 20, email: 'zhangsan@qq.com' },
-  { id: 2, name: '李四', age: 21, email: 'lisi@qq.com' },
-  { id: 3, name: '王五', age: 22, email: 'wangwu@qq.com' },
-  { id: 4, name: '赵六', age: 23, email: 'zhaoliu@qq.com' },
-  { id: 5, name: '小明', age: 24, email: 'xiaoming@qq.com' }
-])
+onMounted(async () => {
+  try {
+    const res = await getUsers()
+    if (res.data.success) {
+      tableData.value = res.data.data
+    }
+  } catch (e) {
+    ElMessage.error('加载用户数据失败')
+  }
+})
 </script>

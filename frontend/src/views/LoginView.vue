@@ -35,9 +35,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { login as loginApi } from '@/api/index.js'
 import SocialLoginButtons from '@/components/auth/SocialLoginButtons.vue'
 import AuthBottomBar from '@/components/auth/AuthBottomBar.vue'
 
@@ -48,16 +49,22 @@ const loginForm = reactive({
   password: ''
 })
 
-const login = () => {
+const login = async () => {
   if (loginForm.username === '' || loginForm.password === '') {
     ElMessage.error('请输入用户名和密码')
     return
   }
-
-  ElMessage.success('登录成功')
-  setTimeout(() => {
-    router.push('/dashboard')
-  }, 1000)
+  try {
+    const res = await loginApi(loginForm)
+    if (res.data.success) {
+      ElMessage.success('登录成功')
+      setTimeout(() => { router.push('/dashboard') }, 1000)
+    } else {
+      ElMessage.error(res.data.message || '登录失败')
+    }
+  } catch (e) {
+    ElMessage.error('网络错误，请稍后重试')
+  }
 }
 </script>
 

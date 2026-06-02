@@ -36,6 +36,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
+import { changePassword as changePasswordApi } from '@/api/index.js'
 import AuthBottomBar from '@/components/auth/AuthBottomBar.vue'
 
 const router = useRouter()
@@ -67,12 +68,23 @@ const rules = reactive({
 })
 
 const submit = () => {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(async (valid) => {
     if (valid) {
-      ElMessage.success('密码修改成功！即将返回登录页')
-      setTimeout(() => {
-        router.push('/login')
-      }, 1000)
+      try {
+        const res = await changePasswordApi({
+          username: form.username,
+          oldPassword: form.oldPassword,
+          newPassword: form.newPassword
+        })
+        if (res.data.success) {
+          ElMessage.success('密码修改成功！即将返回登录页')
+          setTimeout(() => { router.push('/login') }, 1000)
+        } else {
+          ElMessage.error(res.data.message || '修改失败')
+        }
+      } catch (e) {
+        ElMessage.error('网络错误，请稍后重试')
+      }
     } else {
       ElMessage.error('请完善表单信息后再提交！')
     }

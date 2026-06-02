@@ -63,6 +63,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { register as registerApi } from '@/api/index.js'
 import AuthBottomBar from '@/components/auth/AuthBottomBar.vue'
 
 const router = useRouter()
@@ -105,12 +106,24 @@ const rules = {
 }
 
 const handleRegister = () => {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(async (valid) => {
     if (valid) {
-      ElMessage.success('注册成功')
-      setTimeout(() => {
-        router.push('/login')
-      }, 1000)
+      try {
+        const res = await registerApi({
+          username: registerForm.username,
+          password: registerForm.password,
+          email: registerForm.email,
+          birthday: registerForm.birthday
+        })
+        if (res.data.success) {
+          ElMessage.success('注册成功')
+          setTimeout(() => { router.push('/login') }, 1000)
+        } else {
+          ElMessage.error(res.data.message || '注册失败')
+        }
+      } catch (e) {
+        ElMessage.error('网络错误，请稍后重试')
+      }
     }
   })
 }
