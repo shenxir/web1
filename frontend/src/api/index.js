@@ -10,7 +10,19 @@ const api = axios.create({
 export const login = (data) => api.post('/auth/login', data)
 export const register = (data) => api.post('/auth/register', data)
 export const changePassword = (data) => api.post('/auth/changePassword', data)
+export const updateAvatar = (data) => api.post('/auth/avatar', data)
 
 // Data APIs
-export const getUsers = () => api.get('/users')
-export const getArticles = () => api.get('/articles')
+export const getUsers = (params) => api.get('/users', { params })
+export const getUserByName = (name) => api.get(`/users/${name}`)
+export const updateProfile = (data) => api.put('/users/profile', data)
+export const getArticles = (params) => api.get('/articles', { params })
+
+// File API
+export const uploadAvatar = (file) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return api.post('/file/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}

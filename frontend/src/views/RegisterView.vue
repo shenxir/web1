@@ -44,9 +44,17 @@
 
     <div class="register-right">
       <div class="upload-tip">请上传头像</div>
-      <div class="avatar-box">
-        <i class="fa-solid fa-plus"></i>
-        <input type="file" id="avatarInput" accept="image/*">
+      <div class="avatar-box" @click="triggerUpload">
+        <img v-if="avatarPreview" :src="avatarPreview" class="avatar-preview" />
+        <i v-else class="fa-solid fa-plus"></i>
+        <input
+          ref="avatarInputRef"
+          type="file"
+          id="avatarInput"
+          accept="image/*"
+          style="display: none"
+          @change="handleAvatarChange"
+        >
       </div>
     </div>
   </div>
@@ -63,11 +71,14 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { register as registerApi } from '@/api/index.js'
+import { register as registerApi, uploadAvatar, updateAvatar } from '@/api/index.js'
 import AuthBottomBar from '@/components/auth/AuthBottomBar.vue'
 
 const router = useRouter()
 const formRef = ref(null)
+const avatarInputRef = ref(null)
+const avatarFile = ref(null)
+const avatarPreview = ref('')
 
 const registerForm = reactive({
   username: '',
@@ -105,6 +116,21 @@ const rules = {
   ]
 }
 
+const triggerUpload = () => {
+  avatarInputRef.value.click()
+}
+
+const handleAvatarChange = (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    ElMessage.error('请选择图片文件')
+    return
+  }
+  avatarFile.value = file
+  avatarPreview.value = URL.createObjectURL(file)
+}
+
 const handleRegister = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
@@ -116,6 +142,20 @@ const handleRegister = () => {
           birthday: registerForm.birthday
         })
         if (res.data.success) {
+          // 如果选了头像，注册成功后上传
+          if (avatarFile.value) {
+            try {
+              const uploadRes = await uploadAvatar(avatarFile.value)
+              if (uploadRes.data.success) {
+                await updateAvatar({
+                  name: registerForm.username,
+                  avatar: uploadRes.data.data
+                })
+              }
+            } catch (err) {
+              // 头像上传失败不影响注册
+            }
+          }
           ElMessage.success('注册成功')
           setTimeout(() => { router.push('/login') }, 1000)
         } else {
@@ -172,6 +212,7 @@ const handleRegister = () => {
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+  overflow: hidden;
 }
 
 .avatar-box:hover {
@@ -184,12 +225,10 @@ const handleRegister = () => {
   color: #909399;
 }
 
-#avatarInput {
-  position: absolute;
+.avatar-preview {
   width: 100%;
   height: 100%;
-  opacity: 0;
-  cursor: pointer;
+  object-fit: cover;
 }
 
 .el-input__inner, .el-date-editor {

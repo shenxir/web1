@@ -14,6 +14,7 @@ import { ElMessage } from 'element-plus'
 const router = useRouter()
 
 const logout = () => {
+  localStorage.removeItem('username')
   ElMessage.success('退出成功，即将返回登录页')
   setTimeout(() => {
     router.push('/login')

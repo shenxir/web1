@@ -13,13 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class MockDataStore {
 
-    private final List<User> users = new ArrayList<>(List.of(
-            new User(1, "张三", 20, "zhangsan@qq.com"),
-            new User(2, "李四", 21, "lisi@qq.com"),
-            new User(3, "王五", 22, "wangwu@qq.com"),
-            new User(4, "赵六", 23, "zhaoliu@qq.com"),
-            new User(5, "小明", 24, "xiaoming@qq.com")
-    ));
 
     private final List<Article> articles = new ArrayList<>(List.of(
             new Article(1, "Vue前端开发实战", "admin", "2025-01-01"),
@@ -36,7 +29,7 @@ public class MockDataStore {
     private final AtomicInteger userIdSequence = new AtomicInteger(6);
     private final AtomicInteger articleIdSequence = new AtomicInteger(6);
 
-    public List<User> getUsers() { return users; }
+
     public List<Article> getArticles() { return articles; }
     public Map<String, String> getRegisteredUsers() { return registeredUsers; }
     public int getNextUserId() { return userIdSequence.getAndIncrement(); }

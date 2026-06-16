@@ -1,39 +1,66 @@
 package com.exp1.admin.service;
 
-import com.exp1.admin.data.MockDataStore;
+import com.exp1.admin.mapper.UserMapper;
+import com.exp1.admin.mapper.UserTMapper;
 import com.exp1.admin.model.ChangePasswordRequest;
 import com.exp1.admin.model.LoginRequest;
 import com.exp1.admin.model.RegisterRequest;
+import com.exp1.admin.model.User;
+import com.exp1.admin.model.UserT;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class AuthService {
 
-    private final MockDataStore dataStore;
+    private final UserTMapper userTMapper;
+    private final UserMapper userMapper;
 
-    public AuthService(MockDataStore dataStore) {
-        this.dataStore = dataStore;
+    public AuthService(UserTMapper userTMapper, UserMapper userMapper) {
+        this.userTMapper = userTMapper;
+        this.userMapper = userMapper;
     }
 
     public boolean login(LoginRequest request) {
-        String password = dataStore.getRegisteredUsers().get(request.getUsername());
-        return password != null && password.equals(request.getPassword());
+        UserT user = userTMapper.selectByName(request.getUsername());
+        return user != null && user.getPassword().equals(request.getPassword());
     }
 
     public boolean register(RegisterRequest request) {
-        if (dataStore.getRegisteredUsers().containsKey(request.getUsername())) {
+        UserT existing = userTMapper.selectByName(request.getUsername());
+        if (existing != null) {
             return false;
         }
-        dataStore.getRegisteredUsers().put(request.getUsername(), request.getPassword());
+        UserT userT = new UserT();
+        userT.setName(request.getUsername());
+        userT.setPassword(request.getPassword());
+        userT.setEmail(request.getEmail());
+        userTMapper.insert(userT);
+
+        // 同步写入 User 表，用于用户列表展示
+        User user = new User();
+        user.setDate(new Date());
+        user.setName(request.getUsername());
+        user.setProvince("未设置");
+        user.setCity("未设置");
+        user.setAddress("未设置");
+        user.setZip("000000");
+        userMapper.insert(user);
+
         return true;
     }
 
     public boolean changePassword(ChangePasswordRequest request) {
-        String oldPassword = dataStore.getRegisteredUsers().get(request.getUsername());
-        if (oldPassword == null || !oldPassword.equals(request.getOldPassword())) {
+        UserT user = userTMapper.selectByName(request.getUsername());
+        if (user == null || !user.getPassword().equals(request.getOldPassword())) {
             return false;
         }
-        dataStore.getRegisteredUsers().put(request.getUsername(), request.getNewPassword());
+        userTMapper.updatePassword(request.getUsername(), request.getNewPassword());
         return true;
+    }
+
+    public boolean updateAvatar(String name, String avatar) {
+        return userTMapper.updateAvatar(name, avatar) > 0;
     }
 }

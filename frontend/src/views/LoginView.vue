@@ -57,6 +57,7 @@ const login = async () => {
   try {
     const res = await loginApi(loginForm)
     if (res.data.success) {
+      localStorage.setItem('username', loginForm.username)
       ElMessage.success('登录成功')
       setTimeout(() => { router.push('/dashboard') }, 1000)
     } else {
