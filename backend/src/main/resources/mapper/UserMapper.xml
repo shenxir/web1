@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exp1.admin.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="User">
+        <id property="id" column="id"/>
+        <result property="date" column="date"/>
+        <result property="name" column="name"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="zip" column="zip"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="UserResultMap">
+        SELECT id, date, name, province, city, address, zip
+        FROM User
+    </select>
+
+    <select id="selectPage" resultMap="UserResultMap">
+        SELECT id, date, name, province, city, address, zip
+        FROM User
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*) FROM User
+    </select>
+
+    <select id="selectPageByName" resultMap="UserResultMap">
+        SELECT id, date, name, province, city, address, zip
+        FROM User
+        WHERE name LIKE CONCAT('%', #{name}, '%')
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectCountByName" resultType="int">
+        SELECT COUNT(*) FROM User
+        WHERE name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO User (date, name, province, city, address, zip)
+        VALUES (#{date}, #{name}, #{province}, #{city}, #{address}, #{zip})
+    </insert>
+
+    <select id="selectByName" resultMap="UserResultMap">
+        SELECT id, date, name, province, city, address, zip
+        FROM User
+        WHERE name = #{name}
+    </select>
+
+    <update id="updateProfile">
+        UPDATE User
+        SET province = #{province}, city = #{city}, address = #{address}, zip = #{zip}
+        WHERE name = #{name}
+    </update>
+
+</mapper>

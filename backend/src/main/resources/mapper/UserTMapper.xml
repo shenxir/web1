@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exp1.admin.mapper.UserTMapper">
+
+    <resultMap id="UserTResultMap" type="UserT">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="birthday" column="birthday"/>
+        <result property="money" column="money"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+
+    <select id="selectByName" resultMap="UserTResultMap">
+        SELECT id, name, password, email, birthday, money, avatar
+        FROM userT
+        WHERE name = #{name}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO userT (name, password, email, birthday)
+        VALUES (#{name}, #{password}, #{email}, #{birthday})
+    </insert>
+
+    <update id="updatePassword">
+        UPDATE userT
+        SET password = #{password}
+        WHERE name = #{name}
+    </update>
+
+    <update id="updateAvatar">
+        UPDATE userT
+        SET avatar = #{avatar}
+        WHERE name = #{name}
+    </update>
+
+</mapper>
